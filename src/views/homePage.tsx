@@ -39,13 +39,6 @@ function HomePage() {
     const [country, setCountry] = useState('');
     const [filterUser, setFilterUser] = useState<FetchUsers[] | null>(null)
 
-    // const [userData, setUserData] = useState<FetchUsers[]>([]);
-
-    // useEffect(() => {
-    //     const {data} = useFetch<FetchUsers[]>(`?results=${rowsPerPage}&nat=${country}`);
-    //     if(data)setUserData(data)
-    // }, [])
-
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
     };
@@ -58,10 +51,6 @@ function HomePage() {
     const recordsAfterPagingAndSorting = () => {
         return filterUser?.slice(page * rowsPerPage, (page + 1) * rowsPerPage)
     }
-
-    // const handleCountryChange = (event: any) => {
-    //     setCountry(event.target.value)
-    // }
 
     const headerCells = [
         { id: 'fullname', label: 'Name' },
@@ -93,25 +82,18 @@ function HomePage() {
         }
     }
     const filterByCountry = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>{
-        fsetCountry(e.target.value)
-
+        setCountry(e.target.value)
     }
 
     return (
         <Paper sx={{ width: '100%' }} className="HomePage">
-            <Typography variant="h5" component="h5">
-                Users Table
-            </Typography>
-           
                 <TextField
-                    onChange={e => setCountry(e.target.value)}
+                    onChange={e => setCountry(e.target.value.toUpperCase())}
                     id="search-field"
                     label="Search by Country"
                     variant="filled"
                     value={country}
-                />
-                <Button variant='contained' onClick={filterByCountry}>Search</Button>
-            
+                />          
 
             <TableContainer sx={{ minHeight: 500 }}>
                 <Table>
@@ -128,14 +110,27 @@ function HomePage() {
                     </TableHead>
                     <TableBody>
                         {filterUser?.map((users) => {
-                            return (
-                                <TableRow key={users.login.uuid}>
-                                    <TableCell>{users.name.first} {users.name.last}</TableCell>
-                                    <TableCell>{users.email}</TableCell>
-                                    <TableCell>{users.gender}</TableCell>
-                                    <TableCell>{users.nat}</TableCell>
-                                </TableRow>
-                            )
+                            if(country) {
+                                if(country === users.nat) {
+                                    return (
+                                        <TableRow key={users.login.uuid}>
+                                            <TableCell>{users.name.first} {users.name.last}</TableCell>
+                                            <TableCell>{users.email}</TableCell>
+                                            <TableCell>{users.gender}</TableCell>
+                                            <TableCell>{users.nat}</TableCell>
+                                        </TableRow>
+                                    )
+                                }
+                            } else {
+                                return (
+                                    <TableRow key={users.login.uuid}>
+                                        <TableCell>{users.name.first} {users.name.last}</TableCell>
+                                        <TableCell>{users.email}</TableCell>
+                                        <TableCell>{users.gender}</TableCell>
+                                        <TableCell>{users.nat}</TableCell>
+                                    </TableRow>
+                                )
+                            }
                         })
                         }
                     </TableBody>
