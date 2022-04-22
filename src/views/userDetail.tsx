@@ -14,6 +14,7 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import MaleIcon from '@mui/icons-material/Male'
 import FemaleIcon from '@mui/icons-material/Female'
+import { useParams } from "react-router-dom";
 interface User {
     login: {
         uuid: string
@@ -38,9 +39,9 @@ interface User {
 }
 
 export default function UserDetail() {
+    const {id} = useParams()
     const [selectedPosition, setSelectedPosition] = useState<[number, number]>([0, 0])
-    const { data: userData, isFetching } = useFetch<User[]>(``);
-
+    const { data: userData, isFetching } = useFetch<User[]>(`?email=${id}`)
     useEffect(() => {
         userData?.filter(position => {
             const { latitude, longitude } = position.location.coordinates;
@@ -51,8 +52,11 @@ export default function UserDetail() {
     return (
         <>
             {isFetching && <p>Loading...</p>}
-
-            {userData?.map((user) => {
+            
+            {
+            
+            userData?.map((user) => {
+                     
                 let flag = user.nat.toLowerCase()
                 const fullName = [user.name.first, " ", user.name.last]
                 return (

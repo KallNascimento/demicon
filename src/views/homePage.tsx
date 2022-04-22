@@ -1,7 +1,8 @@
 import { useFetch } from '../hooks/useFetch';
 import "./HomePage.css";
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { useParams } from 'react-router-dom'
+import {Link } from 'react-router-dom'
+
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -10,13 +11,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel/TableSortLabel';
-import TableFooter from '@mui/material/TableFooter';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
-import  Button  from '@mui/material/Button';
-import { IconButton } from '@mui/material';
-import { Search } from '@mui/icons-material';
+import TextField from '@mui/material/TextField'
+import View from '@mui/icons-material/Visibility';
 
 
 type FetchUsers = {
@@ -47,7 +43,10 @@ function HomePage() {
         setRowsPerPage(parseInt(event.target.value, 10))
         setPage(0);
     }
+    const seeDetails = () => {
 
+        history.pushState('/userDetail', "")
+    }
     const recordsAfterPagingAndSorting = () => {
         return filterUser?.slice(page * rowsPerPage, (page + 1) * rowsPerPage)
     }
@@ -68,32 +67,15 @@ function HomePage() {
         }
     }, [usersData])
 
-    const onTextFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        console.log(e.target.value);
-        setCountry(e.target.value)
-        if (Array.isArray(filterUser) && filterUser?.length > 0) {
-            const newArray = filterUser?.filter(user => {
-                return user.nat === country
-            })
-            console.log(newArray);
-            if (newArray?.length > 0) {
-                setFilterUser(newArray)
-            }
-        }
-    }
-    const filterByCountry = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>{
-        setCountry(e.target.value)
-    }
-
     return (
         <Paper sx={{ width: '100%' }} className="HomePage">
-                <TextField
-                    onChange={e => setCountry(e.target.value.toUpperCase())}
-                    id="search-field"
-                    label="Search by Country"
-                    variant="filled"
-                    value={country}
-                />          
+            <TextField
+                onChange={e => setCountry(e.target.value.toUpperCase())}
+                id="search-field"
+                label="Search by Country"
+                variant="filled"
+                value={country}
+            />
 
             <TableContainer sx={{ minHeight: 500 }}>
                 <Table>
@@ -110,40 +92,41 @@ function HomePage() {
                     </TableHead>
                     <TableBody>
                         {filterUser?.map((users) => {
-                            if(country) {
-                                if(country === users.nat) {
+                            if (country) {
+                                if (country === users.nat) {
                                     return (
-                                        <TableRow key={users.login.uuid}>
+                                        <TableRow key={users.login.uuid} onClick={seeDetails}>
                                             <TableCell>{users.name.first} {users.name.last}</TableCell>
                                             <TableCell>{users.email}</TableCell>
                                             <TableCell>{users.gender}</TableCell>
                                             <TableCell>{users.nat}</TableCell>
+                                            <TableCell><Link to={`/userdetails/${users.login.uuid}`}><View/></Link></TableCell>
                                         </TableRow>
                                     )
                                 }
                             } else {
                                 return (
-                                    <TableRow key={users.login.uuid}>
-                                        <TableCell>{users.name.first} {users.name.last}</TableCell>
+                                    <TableRow key={users.login.uuid} onClick={seeDetails}>
+                                        <TableCell >{users.name.first} {users.name.last}</TableCell>
                                         <TableCell>{users.email}</TableCell>
                                         <TableCell>{users.gender}</TableCell>
                                         <TableCell>{users.nat}</TableCell>
+                                        <TableCell><Link to={`/userdetails/${users.login.uuid}`}><View/></Link></TableCell>
                                     </TableRow>
                                 )
                             }
                         })
                         }
                     </TableBody>
-                    {/* <TableFooter>
-                        <TablePagination
-                            count={usersData?.length}
-                            rowsPerPageOptions={pages}
-                            rowsPerPage={rowsPerPage}
-                            page={page}
-                            onPageChange={handleChangePage}
-                            onRowsPerPageChange={handleChangeRowsPerPage}
-                        />
-                    </TableFooter> */}
+
+                    <TablePagination
+                        count={10}
+                        rowsPerPageOptions={pages}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
                 </Table>
             </TableContainer>
 
