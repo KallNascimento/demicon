@@ -1,6 +1,5 @@
-.mapWrapper{
-    display: flex;
-    margin-top: 20%;
-    
-    height: 100px;
+.leaflet-container {
+    width: 50vw;
+    height: 50vh;
+    margin-top: 10px;
 }

@@ -1,7 +1,7 @@
 import { useFetch } from "../hooks/useFetch";
 import { MapContainer, TileLayer, Marker, useMap, Popup } from 'react-leaflet';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -14,44 +14,49 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import MaleIcon from '@mui/icons-material/Male'
 import FemaleIcon from '@mui/icons-material/Female'
-export default function UserDetail() {
-
-    interface User {
-        login: {
-            uuid: string
-        },
-        name: {
-            title: string,
-            first: string,
-            last: string
-        };
-        gender: string;
-        nat: string;
-        email: string;
-        location: {
+interface User {
+    login: {
+        uuid: string
+    },
+    name: {
+        title: string,
+        first: string,
+        last: string
+    };
+    gender: string;
+    nat: string;
+    email: string;
+    location: {
+        coordinates: {
             latitude: number,
             longitude: number,
-        };
-        picture: {
-            large: string
         }
+    };
+    picture: {
+        large: string
     }
+}
 
-    const [selectedPosition, setSelectedPosition] = useState<[number, number]>([0, 0]);
-    const { data: userData, isFetching } =
-        useFetch<User[]>(``);
+export default function UserDetail() {
+    const [selectedPosition, setSelectedPosition] = useState<[number, number]>([0, 0])
+    const { data: userData, isFetching } = useFetch<User[]>(``);
+
+    useEffect(() => {
+        userData?.filter(position => {
+            const { latitude, longitude } = position.location.coordinates;
+            setSelectedPosition([latitude, longitude]);
+        })
+    }, [userData])
 
     return (
         <>
             {isFetching && <p>Loading...</p>}
 
             {userData?.map((user) => {
-                [user.location.latitude, user.location.longitude] = selectedPosition;
                 let flag = user.nat.toLowerCase()
                 const fullName = [user.name.first, " ", user.name.last]
                 return (
                     <>
-
                         <Card sx={{ display: 'flex', maxWidth: 400 }} key={user.login.uuid}>
                             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                                 <CardContent sx={{ flex: '1 0 auto' }}>
@@ -73,6 +78,7 @@ export default function UserDetail() {
                                         image={`https://flagcdn.com/48x36/${flag}.png`}
                                         alt="Live from space album cover"
                                     />
+                                   
                                 </Box>
                             </Box>
                             <CardMedia
@@ -82,31 +88,26 @@ export default function UserDetail() {
                                 alt="Live from space album cover"
                             />
                         </Card>
+                        <MapContainer
+                            center={selectedPosition}
+                            zoom={3}
+                            attributionControl={true}
+                            zoomControl={true}
+                            className="leaflet-container">
+                            <TileLayer
+                                attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            />
 
-                        <div className="mapWrapper">
-                            <MapContainer
-                                center={selectedPosition}
-                                zoom={15}
-                                scrollWheelZoom={false}
-                                dragging={false}
-                                doubleClickZoom={false}
-                                attributionControl={false}
-                                zoomControl={false}
-                            >
-                                <TileLayer
-                                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                />
+                            <Marker position={selectedPosition}>
+                                <Popup>
+                                    <p>{fullName}'s House.</p>
+                                </Popup>
 
-                                <Marker position={selectedPosition}>
-                                    <Popup>
-                                        <p>{fullName}'s House.</p>
-                                    </Popup>
+                            </Marker>
+                        </MapContainer>
 
-                                </Marker>
-                            </MapContainer>
 
-                        </div>
 
                     </>
                 );

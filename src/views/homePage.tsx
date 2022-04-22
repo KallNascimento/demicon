@@ -92,8 +92,8 @@ function HomePage() {
             }
         }
     }
-    const filterByCountry = () =>{
-        //    need to implement
+    const filterByCountry = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>{
+        fsetCountry(e.target.value)
 
     }
 
@@ -108,7 +108,7 @@ function HomePage() {
                     id="search-field"
                     label="Search by Country"
                     variant="filled"
-                    value=""
+                    value={country}
                 />
                 <Button variant='contained' onClick={filterByCountry}>Search</Button>
             
@@ -139,7 +139,7 @@ function HomePage() {
                         })
                         }
                     </TableBody>
-                    <TableFooter>
+                    {/* <TableFooter>
                         <TablePagination
                             count={usersData?.length}
                             rowsPerPageOptions={pages}
@@ -148,7 +148,7 @@ function HomePage() {
                             onPageChange={handleChangePage}
                             onRowsPerPageChange={handleChangeRowsPerPage}
                         />
-                    </TableFooter>
+                    </TableFooter> */}
                 </Table>
             </TableContainer>
 
