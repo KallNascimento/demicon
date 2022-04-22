@@ -39,9 +39,10 @@ interface User {
 }
 
 export default function UserDetail() {
-    const {id} = useParams()
+    const { uuid } = useParams()
     const [selectedPosition, setSelectedPosition] = useState<[number, number]>([0, 0])
-    const { data: userData, isFetching } = useFetch<User[]>(`?email=${id}`)
+    const { data: userData, isFetching } = useFetch<User[]>(`?uuid=${uuid}`)
+    console.log(uuid)
     useEffect(() => {
         userData?.filter(position => {
             const { latitude, longitude } = position.location.coordinates;
@@ -52,70 +53,70 @@ export default function UserDetail() {
     return (
         <>
             {isFetching && <p>Loading...</p>}
-            
+
             {
-            
-            userData?.map((user) => {
-                     
-                let flag = user.nat.toLowerCase()
-                const fullName = [user.name.first, " ", user.name.last]
-                return (
-                    <>
-                        <Card sx={{ display: 'flex', maxWidth: 400 }} key={user.login.uuid}>
-                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                <CardContent sx={{ flex: '1 0 auto' }}>
-                                    <Typography component="div" variant="h5">
-                                        {fullName}
-                                    </Typography>
 
-                                    <Typography variant="subtitle1" color="text.secondary" component="div">
-                                        {user.email}
-                                    </Typography>
-                                </CardContent>
-                                <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
-                                    <IconButton aria-label="previous">
-                                        {user.gender === 'male' ? <MaleIcon /> : <FemaleIcon />}
-                                    </IconButton>
-                                    <CardMedia
-                                        component="img"
-                                        sx={{ width: 36, height: 26 }}
-                                        image={`https://flagcdn.com/48x36/${flag}.png`}
-                                        alt="Live from space album cover"
-                                    />
-                                   
+                userData?.map((user, uuid) => {
+                    let flag = user.nat.toLowerCase()
+                    const fullName = [user.name.first, " ", user.name.last]
+                    return (
+                        <>
+                            <Card sx={{ display: 'flex', maxWidth: 400 }} key={user.login.uuid}>
+                                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                    <CardContent sx={{ flex: '1 0 auto' }}>
+                                        <Typography component="div" variant="h5">
+                                            {fullName}
+                                        </Typography>
+
+                                        <Typography variant="subtitle1" color="text.secondary" component="div">
+                                            {user.email}
+                                        </Typography>
+                                    </CardContent>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
+                                        <IconButton aria-label="previous">
+                                            {user.gender === 'male' ? <MaleIcon /> : <FemaleIcon />}
+                                        </IconButton>
+                                        <CardMedia
+                                            component="img"
+                                            sx={{ width: 36, height: 26 }}
+                                            image={`https://flagcdn.com/48x36/${flag}.png`}
+                                            alt={user.name.first + "'s country flag"}
+                                        />
+
+                                    </Box>
                                 </Box>
-                            </Box>
-                            <CardMedia
-                                component="img"
-                                sx={{ width: 151 }}
-                                image={user.picture.large}
-                                alt="Live from space album cover"
-                            />
-                        </Card>
-                        <MapContainer
-                            center={selectedPosition}
-                            zoom={3}
-                            attributionControl={true}
-                            zoomControl={true}
-                            className="leaflet-container">
-                            <TileLayer
-                                attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                            />
+                                <CardMedia
+                                    component="img"
+                                    sx={{ width: 151 }}
+                                    image={user.picture.large}
+                                    alt={user.name.first + "'s profile picture"}
+                                />
 
-                            <Marker position={selectedPosition}>
-                                <Popup>
-                                    <p>{fullName}'s House.</p>
-                                </Popup>
+                            </Card>
+                            <MapContainer
+                                center={selectedPosition}
+                                zoom={3}
+                                attributionControl={true}
+                                zoomControl={true}
+                                className="leaflet-container">
+                                <TileLayer
+                                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                />
 
-                            </Marker>
-                        </MapContainer>
+                                <Marker position={selectedPosition}>
+                                    <Popup>
+                                        <p>{fullName}'s House.</p>
+                                    </Popup>
+
+                                </Marker>
+                            </MapContainer>
 
 
 
-                    </>
-                );
-            })}
+                        </>
+                    );
+                })}
         </>
     )
 }

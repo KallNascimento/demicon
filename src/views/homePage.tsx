@@ -1,7 +1,7 @@
 import { useFetch } from '../hooks/useFetch';
 import "./HomePage.css";
 import React, { ChangeEvent, useEffect, useState } from "react";
-import {Link } from 'react-router-dom'
+import {Link,useNavigate } from 'react-router-dom'
 
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
@@ -66,7 +66,7 @@ function HomePage() {
             setFilterUser(usersData)
         }
     }, [usersData])
-
+ let navigate = useNavigate();
     return (
         <Paper sx={{ width: '100%' }} className="HomePage">
             <TextField
@@ -100,7 +100,9 @@ function HomePage() {
                                             <TableCell>{users.email}</TableCell>
                                             <TableCell>{users.gender}</TableCell>
                                             <TableCell>{users.nat}</TableCell>
-                                            <TableCell><Link to={`/userdetails/${users.login.uuid}`}><View/></Link></TableCell>
+                                            <TableCell onClick={()=>{
+                                            navigate(`/userdetails/${users.login.uuid}`)
+                                        }}><View/></TableCell>
                                         </TableRow>
                                     )
                                 }
@@ -111,7 +113,9 @@ function HomePage() {
                                         <TableCell>{users.email}</TableCell>
                                         <TableCell>{users.gender}</TableCell>
                                         <TableCell>{users.nat}</TableCell>
-                                        <TableCell><Link to={`/userdetails/${users.login.uuid}`}><View/></Link></TableCell>
+                                        <TableCell onClick={()=>{
+                                            navigate(`/userdetails/${users.login.uuid}`)
+                                        }}><View/></TableCell>
                                     </TableRow>
                                 )
                             }

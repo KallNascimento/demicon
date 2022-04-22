@@ -8,7 +8,7 @@ export default function Content() {
             <Routes>
                 <Route index element={<HomePage />} />
                 <Route path="/userdetails" element={<UserDetail />}>
-                    <Route path=":email" element={<UserDetail />} />
+                    <Route path="/userdetails/:uuid" element={<UserDetail />} />
                 </Route>
             </Routes>
         </main>
